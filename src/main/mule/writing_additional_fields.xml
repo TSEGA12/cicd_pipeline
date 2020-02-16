@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="2a88a6a7-e8b0-4493-9877-9eb14e137e9c" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="writing_additional_fieldsFlow" doc:id="7fde7678-0c8b-4fc4-9cfb-764a64eec6e6" >
+		<http:listener doc:name="Listener" doc:id="1e607eac-bbb6-43be-8991-5cb1c65fdd51" config-ref="HTTP_Listener_config" path="/add"/>
+		<ee:transform doc:name="Transform Message" doc:id="0663aa45-12df-410e-b9f6-2e0467ccadc4" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload ++ { address:'3871 loblolly'}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<set-payload value="#[output application/json --- payload]" doc:name="Set Payload" doc:id="7232908c-d9ad-4691-8c5e-953cf2a9711c" />
+		<logger level="INFO" doc:name="Logger" doc:id="8a575eef-622a-45aa-bbfe-afca16b15382" message="#[payload]"/>
+	</flow>
+</mule>
